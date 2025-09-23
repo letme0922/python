@@ -27,3 +27,9 @@ else:
 import glob
 #특정 폴더의 파일 리스트
 print(glob.glob(r"c:\work\*.py"))
+
+import os
+print(os.getcwd())  # 현재 작업 디렉터리
+print("운영체제명:", os.name)  # 운영체제명
+print("환경변수:", os.environ)  # 환경변수
+os.system("notepad.exe")  # 외부 프로그램 실행

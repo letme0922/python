@@ -6,7 +6,7 @@ import os
 #이미지를 저장하기 위한 라이브러리 
 from urllib.request import urlretrieve
 
-def createFolder (name) :
+def createFolder (name):
     if os.path.isdir(f'./{name}') == False :
         os.mkdir(f'./{name}')
         print(f'{name} 폴더 생성 완료')

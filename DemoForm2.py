@@ -4,6 +4,10 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 
+from bs4 import BeautifulSoup
+import urllib.request
+import re 
+
 #2번째 파일을 로딩(DemoForm2.ui) 
 form_class = uic.loadUiType("DemoForm2.ui")[0]
 
@@ -15,7 +19,32 @@ class DemoForm(QMainWindow, form_class):
         self.setupUi(self) #화면단 로딩 
     #슬롯메서드 추가
     def firstClick(self):
-        self.label.setText("첫번째 버튼 클릭")
+        #파일에 저장
+        f = open("clien.txt", "wt", encoding="utf-8")
+
+        #페이징처리 
+        for i in range(0,10):
+            #웹서버에 데이터 전달: QueryString방식 
+            url = "https://www.clien.net/service/board/" \
+                + "sold?&od=T31&category=0&po=" + str(i)
+            print(url)
+            #페이지 실행 결과 문자열 
+            data = urllib.request.urlopen(url)
+            #스프 객체 생성
+            soup = BeautifulSoup(data, 'html.parser')
+            #중고장터매물 제목
+            list = soup.find_all("span", 
+                attrs={"data-role":"list-title-text"})
+            for item in list:
+                #문자열 가공 
+                title = item.text.strip()
+                print(title)
+                f.write(title + "\n")
+
+        #1열에서 코딩 
+        f.close()
+
+        self.label.setText("클리앙 중고 장터 크롤링 완료")
     def secondClick(self):
         self.label.setText("두번째 버튼 클릭했음")
     def thirdClick(self):

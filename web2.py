@@ -4,6 +4,8 @@ from bs4 import BeautifulSoup
 import urllib.request
 import re 
 
+
+
 #파일에 저장
 f = open("clien.txt", "wt", encoding="utf-8")
 

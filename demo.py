@@ -1,5 +1,9 @@
-# demo
-print("Hello vs code")
+# demo.py 
+print("Hello VS Code")
 
+#디버깅셋팅(논리적 오류)
+#중단점 추가(Break point)
 for i in [1,2,3]:
     print(i)
+
+

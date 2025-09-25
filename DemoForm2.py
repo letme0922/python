@@ -1,19 +1,25 @@
-# DemoForm.py
-# DemoForm.ui(화면단) + DemoForm.py(로직단)
+# DemoForm2.py 
+# DemoForm2.ui(화면단) + DemoForm2.py(로직단) = DemoForm2 실행
 import sys 
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 
-#디자인 파일을 로딩(슬라이싱 문법) 
-form_class = uic.loadUiType("DemoForm.ui")[0]
+#2번째 파일을 로딩(DemoForm2.ui) 
+form_class = uic.loadUiType("DemoForm2.ui")[0]
 
-#윈도우 클래스 정의(처음에는 QDialog 상속, 다중상속) 
-class DemoForm(QDialog, form_class):
+#윈도우 클래스 정의(QMainWindow, 다중상속) 
+class DemoForm(QMainWindow, form_class):
     #초기화 메서드 
     def __init__(self):
         super().__init__()
         self.setupUi(self) #화면단 로딩 
-        self.label.setText("첫번째 PyQt데모")
+    #슬롯메서드 추가
+    def firstClick(self):
+        self.label.setText("첫번째 버튼 클릭")
+    def secondClick(self):
+        self.label.setText("두번째 버튼 클릭했음")
+    def thirdClick(self):
+        self.label.setText("세번째 버튼 클릭~~")
 
 #진입점(Entry Point)를 체크: 직접 모듈로 실행될 때만 실행
 if __name__ == "__main__":

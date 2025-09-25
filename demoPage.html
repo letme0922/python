@@ -2,94 +2,118 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>HTML5, CSS3, JavaScript 연습 페이지</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>웹 개발 학습 페이지</title>
     <style>
+        /* CSS 영역 */
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: #f4f6fa;
+            font-family: 'Arial', sans-serif;
             margin: 0;
-            padding: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
         }
-        header {
-            background: #4a90e2;
-            color: #fff;
-            padding: 1.5rem 1rem;
-            text-align: center;
-        }
-        main {
-            max-width: 600px;
-            margin: 2rem auto;
-            background: #fff;
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            padding: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        h1 {
-            margin: 0 0 0.5em 0;
-        }
-        label {
-            font-weight: bold;
-        }
-        input[type="text"] {
-            padding: 0.5em;
-            margin-right: 0.5em;
-            border: 1px solid #ccc;
+
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
             border-radius: 4px;
         }
-        button {
-            padding: 0.5em 1em;
-            background: #4a90e2;
-            color: #fff;
+
+        .button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: background-color 0.3s;
         }
-        button:hover {
-            background: #357ab8;
+
+        .button:hover {
+            background-color: #0056b3;
         }
-        #greeting {
-            margin-top: 1.5em;
-            font-size: 1.2em;
-            color: #333;
-        }
-        footer {
-            text-align: center;
-            color: #888;
-            margin: 2rem 0 1rem 0;
-            font-size: 0.9em;
+
+        #colorBox {
+            width: 100px;
+            height: 100px;
+            background-color: red;
+            margin: 10px 0;
+            transition: all 0.3s;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>HTML5, CSS3, JavaScript 연습</h1>
-        <p>간단한 인사말 웹페이지</p>
-    </header>
-    <main>
-        <form id="greetForm">
-            <label for="nameInput">이름을 입력하세요:</label>
-            <input type="text" id="nameInput" placeholder="이름">
-            <button type="submit">인사하기</button>
-        </form>
-        <div id="greeting"></div>
-    </main>
-    <footer>
-        &copy; 2025 웹 연습 페이지
-    </footer>
+    <div class="container">
+        <h1>웹 개발 학습 페이지</h1>
+        
+        <div class="section">
+            <h2>HTML 예제</h2>
+            <p>기본적인 HTML 요소들:</p>
+            <ul>
+                <li>제목 태그 (h1~h6)</li>
+                <li>문단 태그 (p)</li>
+                <li>링크 태그 (a)</li>
+                <li>이미지 태그 (img)</li>
+            </ul>
+            <a href="https://developer.mozilla.org/ko/" target="_blank">MDN 웹 문서 바로가기</a>
+        </div>
+
+        <div class="section">
+            <h2>CSS 예제</h2>
+            <p>이 박스의 색상을 변경해보세요:</p>
+            <div id="colorBox"></div>
+            <button class="button" onclick="changeColor()">색상 변경</button>
+        </div>
+
+        <div class="section">
+            <h2>JavaScript 예제</h2>
+            <p>간단한 계산기:</p>
+            <input type="number" id="num1" placeholder="첫 번째 숫자">
+            <input type="number" id="num2" placeholder="두 번째 숫자">
+            <button class="button" onclick="calculate()">계산하기</button>
+            <p id="result">결과: </p>
+        </div>
+    </div>
+
     <script>
-        // JavaScript로 인사말 표시
-        document.getElementById('greetForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const name = document.getElementById('nameInput').value.trim();
-            const greetingDiv = document.getElementById('greeting');
-            if (name) {
-                greetingDiv.textContent = `안녕하세요, ${name}님!`;
-            } else {
-                greetingDiv.textContent = '이름을 입력해 주세요.';
+        // JavaScript 영역
+        function changeColor() {
+            const colorBox = document.getElementById('colorBox');
+            const colors = ['red', 'blue', 'green', 'yellow', 'purple'];
+            const currentColor = colorBox.style.backgroundColor;
+            const currentIndex = colors.indexOf(currentColor) || 0;
+            const nextIndex = (currentIndex + 1) % colors.length;
+            colorBox.style.backgroundColor = colors[nextIndex];
+        }
+
+        function calculate() {
+            const num1 = parseFloat(document.getElementById('num1').value);
+            const num2 = parseFloat(document.getElementById('num2').value);
+            
+            if (isNaN(num1) || isNaN(num2)) {
+                alert('올바른 숫자를 입력해주세요!');
+                return;
             }
-        });
+
+            const result = `
+                더하기: ${num1 + num2}
+                빼기: ${num1 - num2}
+                곱하기: ${num1 * num2}
+                나누기: ${num2 !== 0 ? num1 / num2 : '불가능'}
+            `;
+
+            document.getElementById('result').innerText = result;
+        }
     </script>
 </body>
 </html>

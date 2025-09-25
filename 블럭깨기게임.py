@@ -1,131 +1,229 @@
 import pygame
-import sys
+import random
+import math
 
-# 초기화
+# 게임 초기화
 pygame.init()
-WIDTH, HEIGHT = 600, 800
-SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("블럭깨기 게임")
-CLOCK = pygame.time.Clock()
 
-# 색상
+# 폰트 설정
+try:
+    # 윈도우의 기본 한글 폰트인 맑은 고딕 사용
+    game_font = pygame.font.SysFont("malgun gothic", 24)
+except:
+    # 폰트가 없을 경우 기본 폰트 사용
+    game_font = pygame.font.Font(None, 24)
+
+# 화면 크기
+WIDTH, HEIGHT = 800, 600
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("블럭깨기 게임")
+
+# 색상 정의
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-BLUE = (0, 102, 204)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
+PURPLE = (255, 0, 255)
+CYAN = (0, 255, 255)
+ORANGE = (255, 165, 0)
 
-# 패들
-PADDLE_WIDTH, PADDLE_HEIGHT = 100, 15
-paddle = pygame.Rect(WIDTH // 2 - PADDLE_WIDTH // 2, HEIGHT - 40, PADDLE_WIDTH, PADDLE_HEIGHT)
-paddle_speed = 10
+# 아이템 클래스 추가
+class Item:
+    def __init__(self, x, y):
+        self.rect = pygame.Rect(x, y, 20, 20)
+        self.active = True
+        self.speed = 3
 
-# 공
-BALL_RADIUS = 10
-ball = pygame.Rect(WIDTH // 2 - BALL_RADIUS, HEIGHT // 2, BALL_RADIUS * 2, BALL_RADIUS * 2)
-ball_speed_x = 5
-ball_speed_y = -5
+    def move(self):
+        self.rect.y += self.speed
 
-# 블럭
-BLOCK_ROWS = 6
-BLOCK_COLS = 10
-BLOCK_WIDTH = WIDTH // BLOCK_COLS
-BLOCK_HEIGHT = 30
-blocks = []
-for row in range(BLOCK_ROWS):
-    for col in range(BLOCK_COLS):
-        block_rect = pygame.Rect(col * BLOCK_WIDTH + 2, row * BLOCK_HEIGHT + 2, BLOCK_WIDTH - 4, BLOCK_HEIGHT - 4)
-        blocks.append(block_rect)
+    def draw(self):
+        if self.active:
+            pygame.draw.rect(screen, PURPLE, self.rect)
 
-font = pygame.font.SysFont("malgungothic", 36)
-game_over = False
-win = False
+# 총알 클래스 추가
+class Bullet:
+    def __init__(self, x, y):
+        self.rect = pygame.Rect(x, y, 5, 10)
+        self.speed = 7
+        self.active = True
 
-def draw():
-    SCREEN.fill(BLACK)
-    pygame.draw.rect(SCREEN, BLUE, paddle)
-    pygame.draw.ellipse(SCREEN, WHITE, ball)
-    for block in blocks:
-        pygame.draw.rect(SCREEN, GREEN, block)
-    if game_over:
-        msg = "게임 오버!"
-        text = font.render(msg, True, RED)
-        SCREEN.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2))
-    if win:
-        msg = "클리어!"
-        text = font.render(msg, True, BLUE)
-        SCREEN.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2))
-    pygame.display.flip()
+    def move(self):
+        self.rect.y -= self.speed
+        if self.rect.y < 0:
+            self.active = False
 
-def reset():
-    global ball, ball_speed_x, ball_speed_y, paddle, blocks, game_over, win
-    paddle.x = WIDTH // 2 - PADDLE_WIDTH // 2
-    ball.x = WIDTH // 2 - BALL_RADIUS
-    ball.y = HEIGHT // 2
-    ball_speed_x = 5
-    ball_speed_y = -5
-    blocks = []
-    for row in range(BLOCK_ROWS):
-        for col in range(BLOCK_COLS):
-            block_rect = pygame.Rect(col * BLOCK_WIDTH + 2, row * BLOCK_HEIGHT + 2, BLOCK_WIDTH - 4, BLOCK_HEIGHT - 4)
-            blocks.append(block_rect)
+    def draw(self):
+        if self.active:
+            pygame.draw.rect(screen, YELLOW, self.rect)
+
+# 블럭 클래스
+class Block:
+    def __init__(self, x, y, width, height):
+        self.rect = pygame.Rect(x, y, width, height)
+        self.active = True
+        self.color = random.choice([RED, YELLOW, PURPLE, CYAN, ORANGE, GREEN])
+        self.item_chance = 0.3  # 30% 확률로 아이템 드롭
+
+    def draw(self):
+        if self.active:
+            pygame.draw.rect(screen, self.color, self.rect)
+
+# 공 클래스
+class Ball:
+    def __init__(self):
+        self.radius = 10
+        self.x = WIDTH // 2
+        self.y = HEIGHT - 50
+        self.speed = 5
+        self.dx = self.speed
+        self.dy = -self.speed
+        
+    def move(self):
+        self.x += self.dx
+        self.y += self.dy
+        
+        # 벽 충돌 검사
+        if self.x <= self.radius or self.x >= WIDTH - self.radius:
+            self.dx *= -1
+        if self.y <= self.radius:
+            self.dy *= -1
+        if self.y >= HEIGHT - self.radius:
+            return True  # 게임 오버
+        return False
+    
+    def bounce(self):
+        self.dy *= -1
+        
+    def draw(self):
+        pygame.draw.circle(screen, BLUE, (int(self.x), int(self.y)), self.radius)
+        
+    def check_collision(self, rect):
+        # 공의 중심점
+        center_x = self.x
+        center_y = self.y
+        
+        # 사각형과의 충돌 검사
+        closest_x = max(rect.left, min(center_x, rect.right))
+        closest_y = max(rect.top, min(center_y, rect.bottom))
+        
+        distance = math.sqrt((center_x - closest_x) ** 2 + (center_y - closest_y) ** 2)
+        
+        return distance <= self.radius
+
+# 플레이어 클래스
+class Player:
+    def __init__(self):
+        # 패들의 폭을 300으로 변경 (기존 100의 3배)
+        self.rect = pygame.Rect(WIDTH // 2 - 150, HEIGHT - 30, 300, 20)
+
+    def move(self, dx):
+        self.rect.x += dx
+        if self.rect.x < 0:
+            self.rect.x = 0
+        if self.rect.x > WIDTH - self.rect.width:
+            self.rect.x = WIDTH - self.rect.width
+
+    def draw(self):
+        pygame.draw.rect(screen, GREEN, self.rect)
+
+# 게임 루프
+def main():
+    clock = pygame.time.Clock()
+    player = Player()
+    ball = Ball()
+    blocks = [Block(x, y, 50, 20) for x in range(0, WIDTH, 60) 
+             for y in range(50, 200, 30)]
+    running = True
     game_over = False
-    win = False
+    
+    # 아이템과 총알 리스트 추가
+    items = []
+    bullets = []
+    has_gun = False  # 총알 발사 가능 여부
 
-# 메인 루프
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-        if (game_over or win) and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-            reset()
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE and has_gun:
+                    # 스페이스바로 총알 발사
+                    bullets.append(Bullet(player.rect.centerx, player.rect.top))
 
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT] and paddle.left > 0:
-        paddle.x -= paddle_speed
-    if keys[pygame.K_RIGHT] and paddle.right < WIDTH:
-        paddle.x += paddle_speed
+        if not game_over:
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_LEFT]:
+                player.move(-7)
+            if keys[pygame.K_RIGHT]:
+                player.move(7)
 
-    if not game_over and not win:
-        # 공 이동
-        ball.x += ball_speed_x
-        ball.y += ball_speed_y
+            # 공 이동
+            game_over = ball.move()
 
-        # 벽 충돌
-        if ball.left <= 0 or ball.right >= WIDTH:
-            ball_speed_x *= -1
-        if ball.top <= 0:
-            ball_speed_y *= -1
+            # 아이템 이동
+            for item in items[:]:
+                item.move()
+                if item.rect.colliderect(player.rect):
+                    has_gun = True
+                    items.remove(item)
+                elif item.rect.y > HEIGHT:
+                    items.remove(item)
 
-        # 패들 충돌
-        if ball.colliderect(paddle):
-            ball_speed_y *= -1
-            # 패들 중앙에서 벗어날수록 x방향 속도 변화
-            offset = (ball.centerx - paddle.centerx) / (PADDLE_WIDTH // 2)
-            ball_speed_x = int(7 * offset)
+            # 총알 이동
+            for bullet in bullets[:]:
+                bullet.move()
+                if not bullet.active:
+                    bullets.remove(bullet)
 
-        # 블럭 충돌
-        hit_index = ball.collidelist(blocks)
-        if hit_index != -1:
-            hit_block = blocks.pop(hit_index)
-            # 충돌 방향 판정
-            if abs(ball.bottom - hit_block.top) < 10 and ball_speed_y > 0:
-                ball_speed_y *= -1
-            elif abs(ball.top - hit_block.bottom) < 10 and ball_speed_y < 0:
-                ball_speed_y *= -1
-            elif abs(ball.right - hit_block.left) < 10 and ball_speed_x > 0:
-                ball_speed_x *= -1
-            elif abs(ball.left - hit_block.right) < 10 and ball_speed_x < 0:
-                ball_speed_x *= -1
+            # 패들과 공의 충돌
+            if ball.check_collision(player.rect):
+                ball.bounce()
 
-        # 바닥에 닿으면 게임 오버
-        if ball.bottom >= HEIGHT:
-            game_over = True
+            # 블럭과 공/총알의 충돌
+            for block in blocks:
+                if block.active:
+                    # 공과 블럭 충돌
+                    if ball.check_collision(block.rect):
+                        block.active = False
+                        ball.bounce()
+                        # 아이템 생성
+                        if random.random() < block.item_chance:
+                            items.append(Item(block.rect.centerx, block.rect.centery))
+                    
+                    # 총알과 블럭 충돌
+                    for bullet in bullets[:]:
+                        if bullet.active and block.active and bullet.rect.colliderect(block.rect):
+                            block.active = False
+                            bullet.active = False
+                            if random.random() < block.item_chance:
+                                items.append(Item(block.rect.centerx, block.rect.centery))
 
-        # 블럭 다 깨면 승리
-        if not blocks:
-            win = True
+        screen.fill(WHITE)
+        player.draw()
+        ball.draw()
+        
+        # 아이템, 총알, 블럭 그리기
+        for item in items:
+            item.draw()
+        for bullet in bullets:
+            bullet.draw()
+        for block in blocks:
+            block.draw()
 
-    draw()
-    CLOCK.tick(60)
+        # 총알 보유 상태 표시
+        if has_gun:
+            text = "총알 사용 가능 (스페이스바)"
+            text_surface = game_font.render(text, True, BLACK)
+            screen.blit(text_surface, (10, HEIGHT - 30))
+
+        pygame.display.flip()
+        clock.tick(60)
+
+    pygame.quit()
+
+if __name__ == "__main__":
+    main()
+

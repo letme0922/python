@@ -29,3 +29,4 @@ cur.executemany(
 #검색 
 for row in cur.execute("select * from PhoneBook;"):
     print(row)
+

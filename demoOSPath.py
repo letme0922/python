@@ -1,35 +1,33 @@
-# demoOSPath.py
+# demoOSPath.py 
 import random
-from os.path import *
+from os.path import * 
 
-print("---랜덤 모듈---")
-print(random.random())  # 0.0 ~ 1.0 미만의 임의의 값
-print(random.randint(1, 10))  # 1 ~ 10 사이의 임의의 정수 값
-print([random.randrange(20) for i in range(10)])
-print([random.randrange(20) for i in range(10)])
-print(random.sample(range(20),10))
-print(random.sample(range(20),10))
+print("---랜덤모듈---")
+print(random.random()) # 0.0 ~ 1.0 사이의 실수
+print(random.randint(1, 10)) # 1 ~ 10 사이의 정수
+print([random.randrange(20) for i in range(10)]) # 0 ~ 19 사이의 정수 5개
+print([random.randrange(20) for i in range(10)]) # 0 ~ 19 사이의 정수 5개
+print(random.sample(range(20), 10))
+print(random.sample(range(20), 10))
 
-
-
-filePath = r"C:\python310\python.exe"
+#파이썬 파일의 경로 
+#raw string notation 
+filePath = r"c:\python310\python.exe"
 if exists(filePath):
-    print("---os.path 모듈---")
+    print("파일이 존재합니다.")
     print("파일명:", basename(filePath))
-    print("디렉터리명:", dirname(filePath))
-    print("확장자명:", splitext(filePath)[1])
-    print("파일크기:", getsize(filePath), "bytes")
-    print("최종수정일:", getmtime(filePath))
-    print("생성일:", getctime(filePath))
+    print("디렉토리명:", dirname(filePath))
+    print("파일 크기:", getsize(filePath))
 else:
-    print(filePath, "파일이 없습니다.")
+    print("파일이 존재하지 않습니다.")
 
-import glob
-#특정 폴더의 파일 리스트
+import glob 
+#특정 폴더의 파일 리스트 
 print(glob.glob(r"c:\work\*.py"))
 
-import os
-print(os.getcwd())  # 현재 작업 디렉터리
-print("운영체제명:", os.name)  # 운영체제명
-print("환경변수:", os.environ)  # 환경변수
-os.system("notepad.exe")  # 외부 프로그램 실행
+import os 
+print(os.getcwd()) #현재 작업 디렉토리
+print("운영체제명:", os.name) #운영체제명
+print("환경변수:", os.environ) #환경변수
+os.system("notepad.exe") #메모장 실행
+

@@ -1,8 +1,9 @@
 import  openpyxl  as  op  
 
 wb = op.load_workbook("test2.xlsx") 
+#사용한 시트명 
 ws = wb["직원명부"] 
-#"B1" Cell에 입력하기
+#"B1" Cell에 입력하기(1행 2열)
 ws.cell(row=1, column=2).value = "입력테스트1"
 #"C1" Cell에 입력하기
 ws["C1"].value = "입력테스트2"

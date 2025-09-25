@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys 
 from selenium.webdriver.common.by import By
+#대기시간 
 import time 
 
 #크롬드라이버 실행
@@ -19,7 +20,7 @@ searchBox = driver.find_element(By.CLASS_NAME, "gLFyf")
 
 searchBox.send_keys("아이폰17")
 searchBox.send_keys(Keys.RETURN)
-# time.sleep(5)
 
+#무한루프 
 while True:
-    pass
+    pass 

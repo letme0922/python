@@ -30,3 +30,4 @@ print(result.group()) #매칭된 문자열 반환
 result = re.search("\d{4}", "올해는 2025년입니다.")
 print(result) 
 print(result.group()) #매칭된 문자열 반환
+

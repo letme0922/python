@@ -1,8 +1,7 @@
-#testStr.py
-
-strC="""이번에는
-다중라인으로
-저장합니다."""
+# testStr.py 
+strC = '''이번에는
+다중 라인으로
+저장합니다.'''
 
 print(strC)
 
@@ -15,7 +14,7 @@ print(strB[:3])
 print(strB[-2:])
 
 print("---리스트형식---")
-lst = [10,20,30]
+lst = [10, 20, 30]
 print(lst)
 print(len(lst))
 lst.append(40)
@@ -24,16 +23,17 @@ lst.remove(10)
 print(lst)
 print(lst[0])
 
-print("--튜플 형식---")
-tp=(10,20,30)
+print("---튜플(Tuple)형식---")
+tp = (10, 20, 30)
 print(len(tp))
 print(tp.index(30))
 
-#함수를 정의
+#함수를 정의 
 def times(a,b):
-    return a+b, a*b
+    return a+b, a*b 
+
 #호출
 print(times(3,4))
 
-#한번에 여러개 입력
+#한반에 여러개 입력
 print("id: %s, name: %s" % ("kim","김유신"))

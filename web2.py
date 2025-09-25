@@ -7,19 +7,19 @@ import re
 #파일에 저장
 f = open("clien.txt", "wt", encoding="utf-8")
 
+#페이징처리 
 for i in range(0,10):
-    url = "https://www.clien.net/service/board/sold?&od=T31&category=0&po=" + str(i)
+    #웹서버에 데이터 전달: QueryString방식 
+    url = "https://www.clien.net/service/board/" \
+        + "sold?&od=T31&category=0&po=" + str(i)
     print(url)
-    
     #페이지 실행 결과 문자열 
     data = urllib.request.urlopen(url)
     #스프 객체 생성
     soup = BeautifulSoup(data, 'html.parser')
-
     #중고장터매물 제목
     list = soup.find_all("span", 
         attrs={"data-role":"list-title-text"})
-
     for item in list:
         #문자열 가공 
         title = item.text.strip()

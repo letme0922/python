@@ -2,7 +2,7 @@ import  openpyxl  as  op
 
 #샘플로 제공된 파일을 오픈한다. 
 wb = op.load_workbook("result2.xlsx") 
-#마지막으로 활성화된 시트를 가져온다
+#마지막으로 활성화된 시트를 가져온다: .active
 ws = wb["직원명부"]
 
 #방법 1 : Sheet의 Cell 속성 사용하기
@@ -15,7 +15,7 @@ data2 = ws["B1"].value
 print("cell(1,2) : ", data1)
 print('Range("B1"):', data2)
 
-#범위를 지정한 경우 
+#범위를 지정한 경우:엑셀의 range범위  
 rng = ws["A5:A12"] 
 
 for  rng_data  in  rng: 

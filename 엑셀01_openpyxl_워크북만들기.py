@@ -1,4 +1,6 @@
+#별칭을 사용 
 import openpyxl as op 
+
 #워크북 만들기
 wb = op.Workbook() 
 print(wb)
